@@ -1,3 +1,3 @@
 import { main } from "./day1";
 
-main();
+console.log(main());
