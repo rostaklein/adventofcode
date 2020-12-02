@@ -7,14 +7,19 @@ const fileLines = file.split("\n");
 const getIsValidGroup = (params: {
   from: number;
   to: number;
-  letter?: string;
-  password?: string;
+  letter: string;
+  password: string;
 }) => {
-  const matches = params.password?.match(new RegExp(`${params.letter}`, "gi"));
-  const matchesTimes = matches?.length ?? 0;
-  if (matchesTimes >= params.from && matchesTimes <= params.to) {
-    return true;
-  }
+  const charAtFrom = params.password.charAt(params.from - 1);
+  const charAtTo = params.password.charAt(params.to - 1);
+
+  const firstMatches = charAtFrom === params.letter;
+  const secondMatches = charAtTo === params.letter;
+  return {
+    ...params,
+    firstMatches,
+    secondMatches,
+  };
 };
 
 export const getValidPasswords = () => {
@@ -26,11 +31,15 @@ export const getValidPasswords = () => {
     .map((item) => ({
       from: Number(item?.from),
       to: Number(item?.to),
-      letter: item?.letter,
-      password: item?.password,
+      letter: item?.letter ?? "",
+      password: item?.password ?? "",
     }));
 
-  const validGroups = groups.filter(getIsValidGroup);
+  const validGroups = groups
+    .map(getIsValidGroup)
+    .filter(({ firstMatches, secondMatches }) => {
+      return firstMatches !== secondMatches;
+    });
 
   return validGroups;
 };
