@@ -6,18 +6,21 @@ const file = fs
   .toString();
 const numbers = file.split("\n").map((str) => Number(str));
 
-export const getNumbersThatSumTo = (sum: number): [number, number] => {
+export const getNumbersThatSumTo = (sum: number): [number, number, number] => {
   for (const first of numbers) {
     for (const second of numbers) {
-      if (first + second === sum) {
-        return [first, second];
+      for (const third of numbers) {
+        if (first + second + third === sum) {
+          return [first, second, third];
+        }
       }
     }
   }
+
   throw new Error(`Numbers that sum to ${sum} were not found.`);
 };
 
 export const main = (): number => {
-  const [first, second] = getNumbersThatSumTo(2020);
-  return first * second;
+  const [first, second, third] = getNumbersThatSumTo(2020);
+  return first * second * third;
 };
