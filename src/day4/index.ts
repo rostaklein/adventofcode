@@ -44,7 +44,9 @@ const parseSourceData = () => {
   return entries;
 };
 
-const isValidEntry = (partialEntry: PartialEntry): partialEntry is Entry => {
+const hasAllValidFields = (
+  partialEntry: PartialEntry
+): partialEntry is Entry => {
   if (
     partialEntry.byr &&
     partialEntry.ecl &&
@@ -59,9 +61,66 @@ const isValidEntry = (partialEntry: PartialEntry): partialEntry is Entry => {
   return false;
 };
 
+const isNumberInRange = (value: number, range: [number, number]) => {
+  const [min, max] = range;
+  return value >= min && value <= max;
+};
+
+const isBirthYearValid = (entry: Entry) => {
+  const year = Number(entry.byr);
+  return year >= 1920 && year <= 2002;
+};
+
+const isIssueYearValid = (entry: Entry) => {
+  const year = Number(entry.iyr);
+  return year >= 2010 && year <= 2020;
+};
+
+const isExpirationYearValid = (entry: Entry) => {
+  const year = Number(entry.eyr);
+  return year >= 2020 && year <= 2030;
+};
+
+const isHeightValid = (entry: Entry) => {
+  const height = entry.hgt.match(/(?<value>\d*)(?<unit>cm|in)/);
+  const { value: rawValue, unit } = height?.groups ?? {};
+
+  const value = Number(rawValue);
+  if (!["cm", "in"].includes(unit)) {
+    return false;
+  }
+
+  if (unit === "cm") {
+    return value >= 150 && value <= 193;
+  }
+  if (unit === "in") {
+    return value >= 59 && value <= 76;
+  }
+  return true;
+};
+
+const isHairColorValid = (entry: Entry) => {
+  return entry.hcl.match(/#[0-9a-f]{6}/);
+};
+
+const isEyeColorValid = (entry: Entry) => {
+  return ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].includes(entry.ecl);
+};
+
+const isPassportIdValid = (entry: Entry) => {
+  return entry.pid.length === 9 && entry.pid.match(/\d{9}/);
+};
+
 export const main = (): number => {
-  const entries = parseSourceData().filter(isValidEntry);
-  //   console.log(fileLines);
+  const entries = parseSourceData()
+    .filter(hasAllValidFields)
+    .filter(isBirthYearValid)
+    .filter(isIssueYearValid)
+    .filter(isExpirationYearValid)
+    .filter(isHeightValid)
+    .filter(isHairColorValid)
+    .filter(isEyeColorValid)
+    .filter(isPassportIdValid);
 
   return entries.length;
 };
