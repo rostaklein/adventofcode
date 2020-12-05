@@ -19,11 +19,14 @@ export const parseSeatCodeToSeat = (code: string): Seat => {
   const leftRight = letters.slice(7, 10) as LeftRight;
 
   const row = getRow(frontBack, [0, 127]);
+  const column = getColumn(leftRight, [0, 7]);
+
+  const id = row * 8 + column;
 
   return {
-    column: 0,
+    column,
     row,
-    id: 1,
+    id,
   };
 };
 
@@ -38,6 +41,19 @@ const getRow = (frontBack: FrontBack, range: [number, number]): number => {
     return min;
   }
   throw new Error("Could not find a row");
+};
+
+const getColumn = (leftRight: LeftRight, range: [number, number]): number => {
+  let [min, max] = range;
+
+  leftRight.forEach((direction) => {
+    [min, max] = splitInHalf(min, max, direction === "R" ? "upper" : "lower");
+  });
+
+  if (min === max) {
+    return min;
+  }
+  throw new Error("Could not find a column");
 };
 
 export const splitInHalf = (
