@@ -17,24 +17,27 @@ export const parseSeatCodeToSeat = (code: string): Seat => {
   const letters = code.split("");
   const frontBack = letters.slice(0, 7) as FrontBack;
   const leftRight = letters.slice(7, 10) as LeftRight;
-  //   console.log(getRow(frontBack, [0, 127]));
+
+  const row = getRow(frontBack, [0, 127]);
+
   return {
     column: 0,
-    row: 0,
+    row,
     id: 1,
   };
 };
 
-const getRow = (frontBack: FrontBack, range: [number, number]) => {
+const getRow = (frontBack: FrontBack, range: [number, number]): number => {
   let [min, max] = range;
 
   frontBack.forEach((direction) => {
-    [min, max] = splitInHalf(min, max, direction === "B" ? "upper" : lower);
+    [min, max] = splitInHalf(min, max, direction === "B" ? "upper" : "lower");
   });
 
-  console.log({ min, max });
-
-  return [min, max];
+  if (min === max) {
+    return min;
+  }
+  throw new Error("Could not find a row");
 };
 
 export const splitInHalf = (

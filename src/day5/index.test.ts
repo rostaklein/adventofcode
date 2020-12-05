@@ -12,7 +12,7 @@ describe.each`
   }
 );
 
-describe.only(splitInHalf.name, () => {
+describe(splitInHalf.name, () => {
   it("splits the array in half", () => {
     expect(splitInHalf(0, 127, "lower")).toEqual([0, 63]);
     expect(splitInHalf(0, 63, "upper")).toEqual([32, 63]);
