@@ -74,6 +74,8 @@ export const splitInHalf = (
 };
 
 export const main = (): number => {
-  console.log(fileLines);
-  return 0;
+  const sortedIds = fileLines
+    .map(parseSeatCodeToSeat)
+    .sort((a, b) => b.id - a.id);
+  return sortedIds[0].id;
 };
