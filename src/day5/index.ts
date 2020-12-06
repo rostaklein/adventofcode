@@ -76,6 +76,17 @@ export const splitInHalf = (
 export const main = (): number => {
   const sortedIds = fileLines
     .map(parseSeatCodeToSeat)
-    .sort((a, b) => b.id - a.id);
+    .sort((a, b) => a.id - b.id);
+  const startingNumber = sortedIds[0].id;
+  let currentIndex = startingNumber;
+
+  sortedIds.map((item) => {
+    if (currentIndex !== item.id) {
+      console.log(currentIndex);
+      currentIndex++;
+    }
+    currentIndex++;
+  });
+
   return sortedIds[0].id;
 };
