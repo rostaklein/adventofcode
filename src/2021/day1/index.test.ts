@@ -3,7 +3,7 @@ import { clearTestInputData } from "../utils";
 
 describe("day 1", () => {
   describe(getTimesDepthIncreased.name, () => {
-    it("counts the times depth increased correctly", () => {
+    it("counts the times depth increased correctly (three-measurement sliding window)", () => {
       const input = `
               199
               200
@@ -19,7 +19,7 @@ describe("day 1", () => {
 
       const data = clearTestInputData(input);
       const result = getTimesDepthIncreased(data);
-      expect(result).toBe(7);
+      expect(result).toBe(5);
     });
   });
 });
