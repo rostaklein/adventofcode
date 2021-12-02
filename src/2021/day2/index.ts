@@ -21,18 +21,20 @@ export const calcPosition = (
 
   let depth = 0;
   let horizontal = 0;
+  let aim = 0;
 
   for (const instruction of instructions) {
     const val = instruction.value;
     switch (instruction.direction) {
       case "down":
-        depth += val;
+        aim += val;
         break;
       case "up":
-        depth -= val;
+        aim -= val;
         break;
       case "forward":
         horizontal += val;
+        depth += aim * val;
         break;
     }
   }
@@ -44,5 +46,12 @@ export const calcPosition = (
 };
 
 export const main = () => {
-  return calcPosition(fileLines);
+  const { depth, horizontal } = calcPosition(fileLines);
+  return {
+    position: {
+      depth,
+      horizontal,
+    },
+    result: depth * horizontal,
+  };
 };

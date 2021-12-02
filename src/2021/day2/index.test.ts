@@ -16,7 +16,7 @@ describe("day 2", () => {
       const data = clearTestInputData(input);
       const result = calcPosition(data);
       expect(result).toEqual({
-        depth: 10,
+        depth: 60,
         horizontal: 15,
       });
     });
