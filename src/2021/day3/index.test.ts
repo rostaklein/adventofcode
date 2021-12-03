@@ -1,9 +1,9 @@
-import { calcPowerConsumption } from ".";
+import { LifeSupportRatingCalculator } from ".";
 import { clearTestInputData } from "../utils";
 
-describe("day 2", () => {
-  describe(calcPowerConsumption.name, () => {
-    it("calculates position correctly", () => {
+describe("day 3", () => {
+  describe(LifeSupportRatingCalculator.name, () => {
+    it("calculates life support correctly", () => {
       const input = `
               00100
               11110
@@ -20,8 +20,9 @@ describe("day 2", () => {
           `;
 
       const data = clearTestInputData(input);
-      const result = calcPowerConsumption(data);
-      expect(result).toEqual(198);
+      const calculator = new LifeSupportRatingCalculator(data);
+      const result = calculator.run();
+      expect(result).toEqual(230);
     });
   });
 });
