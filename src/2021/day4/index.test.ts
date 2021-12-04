@@ -29,7 +29,7 @@ describe("day 4", () => {
       const data = clearTestInputData(input);
       const calculator = new BingoPlayer(data);
       const result = calculator.run();
-      expect(result).toEqual(230);
+      expect(result).toEqual(4512);
     });
   });
 });

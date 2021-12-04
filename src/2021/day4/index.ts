@@ -1,6 +1,6 @@
 import { readLinesFromAFile } from "../utils";
 
-const fileLines = readLinesFromAFile("./day3/data.txt");
+const fileLines = readLinesFromAFile("./day4/data.txt");
 
 class Board {
   private columns = new Map<number, number[]>();
@@ -19,6 +19,7 @@ class Board {
       rowIndex++;
     }
   }
+
   private parseColumns() {
     const columnLength = 5;
 
@@ -33,6 +34,35 @@ class Board {
       columnIndex++;
     }
   }
+
+  public matchesWholeRow(guesses: number[]) {
+    for (const row of [...this.rows.values()]) {
+      if (row.every((value) => guesses.includes(value))) {
+        return row;
+      }
+    }
+  }
+
+  public matchesWholeColumn(guesses: number[]) {
+    for (const column of [...this.columns.values()]) {
+      if (column.every((value) => guesses.includes(value))) {
+        return column;
+      }
+    }
+  }
+
+  public getSumOfAllUnmarkedNumbers(guesses: number[]) {
+    const unmarkedNumbers: number[] = [];
+    for (const row of [...this.rows.values()]) {
+      row.forEach((value) => {
+        if (!guesses.includes(value)) {
+          unmarkedNumbers.push(value);
+        }
+      });
+    }
+
+    return unmarkedNumbers.reduce((acc, curr) => (acc += curr), 0);
+  }
 }
 
 export class BingoPlayer {
@@ -42,11 +72,30 @@ export class BingoPlayer {
   constructor(rawInput: string[]) {
     const [rawGuesses, ...rawBoards] = rawInput;
     this.guesses = rawGuesses.split(",").map(Number);
-
-    this.boards = this.createBoards(rawBoards);
+    this.boards = this.createBoards(rawBoards.filter(Boolean));
   }
 
   public run(): number {
+    const drawnNumbers: number[] = [];
+
+    for (const guess of this.guesses) {
+      drawnNumbers.push(guess);
+      for (const board of this.boards) {
+        const rowMatches = board.matchesWholeRow(drawnNumbers);
+        const columnMatches = board.matchesWholeColumn(drawnNumbers);
+        if (rowMatches || columnMatches) {
+          const sumUnmarked = board.getSumOfAllUnmarkedNumbers(drawnNumbers);
+          console.log({
+            rowMatches,
+            columnMatches,
+            sumUnmarked,
+            guess,
+          });
+          return guess * sumUnmarked;
+        }
+      }
+    }
+
     return 0;
   }
 
