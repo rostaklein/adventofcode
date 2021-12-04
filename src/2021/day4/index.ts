@@ -67,36 +67,37 @@ class Board {
 
 export class BingoPlayer {
   private readonly guesses: number[];
-  private readonly boards: Board[];
+  private boards = new Map<number, Board>();
 
   constructor(rawInput: string[]) {
     const [rawGuesses, ...rawBoards] = rawInput;
     this.guesses = rawGuesses.split(",").map(Number);
-    this.boards = this.createBoards(rawBoards.filter(Boolean));
+    this.createBoards(rawBoards.filter(Boolean)).forEach((board, i) => {
+      this.boards.set(i, board);
+    });
   }
 
   public run(): number {
     const drawnNumbers: number[] = [];
 
+    const matches = [];
+    let lastSum = 0;
+
     for (const guess of this.guesses) {
       drawnNumbers.push(guess);
-      for (const board of this.boards) {
+      for (const [boardIndex, board] of this.boards) {
         const rowMatches = board.matchesWholeRow(drawnNumbers);
         const columnMatches = board.matchesWholeColumn(drawnNumbers);
         if (rowMatches || columnMatches) {
+          matches.push(guess);
           const sumUnmarked = board.getSumOfAllUnmarkedNumbers(drawnNumbers);
-          console.log({
-            rowMatches,
-            columnMatches,
-            sumUnmarked,
-            guess,
-          });
-          return guess * sumUnmarked;
+          this.boards.delete(boardIndex);
+          lastSum = guess * sumUnmarked;
         }
       }
     }
 
-    return 0;
+    return lastSum;
   }
 
   private createBoards(boardsInput: string[]): Board[] {
