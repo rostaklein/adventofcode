@@ -22,8 +22,7 @@ export class HydroThermalVentureCalc {
       this.instructions.filter(this.isHorizontalOrVertical)
     );
 
-    console.log(this.board);
-    return 0;
+    return [...this.board.values()].filter((num) => num >= 2).length;
   }
 
   private coverBoardWithLines(instructions: Instruction[]) {
@@ -35,17 +34,29 @@ export class HydroThermalVentureCalc {
       const toY = instruction.to[1];
 
       if (fromY === toY) {
-        this.drawXline(fromX, toX, fromY);
+        this.drawLine(fromX, toX, "x", fromY);
+      }
+
+      if (fromX === toX) {
+        this.drawLine(fromY, toY, "y", fromX);
       }
     }
   }
 
-  private drawXline(from: number, to: number, y: number) {
+  private drawLine(
+    from: number,
+    to: number,
+    otherCoordinate: "x" | "y",
+    coordValue: number
+  ) {
     const lowerNumber = from < to ? from : to;
     const higherNumber = from > to ? from : to;
 
     for (let i = lowerNumber; i <= higherNumber; i++) {
-      const mapKey = this.getMapKey(i, y);
+      const mapKey =
+        otherCoordinate === "y"
+          ? this.getMapKey(i, coordValue)
+          : this.getMapKey(coordValue, i);
       const exists = this.board.get(mapKey);
       if (exists) {
         this.board.set(mapKey, exists + 1);
