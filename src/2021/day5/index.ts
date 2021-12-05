@@ -18,9 +18,7 @@ export class HydroThermalVentureCalc {
   }
 
   public run(): number {
-    this.coverBoardWithLines(
-      this.instructions.filter(this.isHorizontalOrVertical)
-    );
+    this.coverBoardWithLines(this.instructions);
 
     return [...this.board.values()].filter((num) => num >= 2).length;
   }
@@ -34,16 +32,16 @@ export class HydroThermalVentureCalc {
       const toY = instruction.to[1];
 
       if (fromY === toY) {
-        this.drawLine(fromX, toX, "x", fromY);
+        this.drawStraightLine(fromX, toX, "x", fromY);
       }
 
       if (fromX === toX) {
-        this.drawLine(fromY, toY, "y", fromX);
+        this.drawStraightLine(fromY, toY, "y", fromX);
       }
     }
   }
 
-  private drawLine(
+  private drawStraightLine(
     from: number,
     to: number,
     otherCoordinate: "x" | "y",
@@ -68,13 +66,6 @@ export class HydroThermalVentureCalc {
 
   private getMapKey(x: number, y: number) {
     return `${x},${y}`;
-  }
-
-  private isHorizontalOrVertical(instruction: Instruction) {
-    return (
-      instruction.from[0] === instruction.to[0] ||
-      instruction.from[1] === instruction.to[1]
-    );
   }
 
   private parseInstruction(input: string): Instruction {
