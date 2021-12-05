@@ -20,6 +20,10 @@ export class HydroThermalVentureCalc {
   public run(): number {
     this.coverBoardWithLines(this.instructions);
 
+    // console.log(this.board);
+
+    this.drawBoard();
+
     return [...this.board.values()].filter((num) => num >= 2).length;
   }
 
@@ -32,12 +36,27 @@ export class HydroThermalVentureCalc {
       const toY = instruction.to[1];
 
       if (fromY === toY) {
-        this.drawStraightLine(fromX, toX, "x", fromY);
+        this.drawStraightLine(fromX, toX, "y", fromY);
+        // console.log("Y straight", instruction);
+      } else if (fromX === toX) {
+        this.drawStraightLine(fromY, toY, "x", fromX);
+        // console.log("X straight", instruction);
+      } else {
+        // console.count("diagonal");
+        // console.log("diagonal", instruction);
+        this.drawDiagonalLine(instruction);
       }
+    }
+  }
 
-      if (fromX === toX) {
-        this.drawStraightLine(fromY, toY, "y", fromX);
+  private drawBoard() {
+    let table = "";
+    for (const y of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+      let line = "";
+      for (const x of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]) {
+        line += this.board.get(`${x},${y}`) ?? ".";
       }
+      table += `${line}\n`;
     }
   }
 
@@ -55,12 +74,34 @@ export class HydroThermalVentureCalc {
         otherCoordinate === "y"
           ? this.getMapKey(i, coordValue)
           : this.getMapKey(coordValue, i);
-      const exists = this.board.get(mapKey);
-      if (exists) {
-        this.board.set(mapKey, exists + 1);
-      } else {
-        this.board.set(mapKey, 1);
-      }
+      this.markPositionVisited(mapKey);
+    }
+  }
+
+  private drawDiagonalLine(instruction: Instruction) {
+    const { from, to } = instruction;
+
+    const directionX = from[0] < to[0] ? "forwards" : "backwards";
+    const directionY = from[1] < to[1] ? "forwards" : "backwards";
+
+    const distance = Math.abs(to[0] - from[0]);
+    // console.log({ from, to });
+
+    for (let i = 0; i <= distance; i++) {
+      const movedX = directionX === "forwards" ? from[0] + i : from[0] - i;
+      const movedY = directionY === "forwards" ? from[1] + i : from[1] - i;
+      // console.log({ movedX, movedY });
+      this.markPositionVisited(this.getMapKey(movedX, movedY));
+    }
+  }
+
+  private markPositionVisited(mapKey: string) {
+    const exists = this.board.get(mapKey);
+    if (exists) {
+      // console.log({ exists, mapKey });
+      this.board.set(mapKey, exists + 1);
+    } else {
+      this.board.set(mapKey, 1);
     }
   }
 

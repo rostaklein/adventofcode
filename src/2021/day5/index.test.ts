@@ -20,7 +20,7 @@ describe("day 5", () => {
       const data = clearTestInputData(input);
       const calculator = new HydroThermalVentureCalc(data);
       const result = calculator.run();
-      expect(result).toEqual(5);
+      expect(result).toEqual(12);
     });
   });
 });
