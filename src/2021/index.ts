@@ -3,6 +3,7 @@
 // import { main } from "./day3";
 // import { main } from "./day4";
 // import { main } from "./day5";
-import { main } from "./day6";
+// import { main } from "./day6";
+import { main } from "./day7";
 
 console.log(main());
