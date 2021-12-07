@@ -11,7 +11,21 @@ describe("day 7", () => {
       const data = clearTestInputData(input);
       const calculator = new CrabFuelCalculator(data);
       const result = calculator.run();
-      expect(result).toEqual(37);
+      expect(result).toEqual(168);
+    });
+  });
+  describe(CrabFuelCalculator.stepFuelCalculator.name, () => {
+    it.each([
+      [16, 5, 66],
+      [1, 5, 10],
+      [2, 5, 6],
+      [0, 5, 15],
+      [4, 5, 1],
+      [2, 5, 6],
+      [2, 2, 0],
+    ])("Move from %s to %s: %s fuel", (from, to, expectedFuel) => {
+      const fuel = CrabFuelCalculator.stepFuelCalculator(from, to);
+      expect(fuel).toEqual(expectedFuel);
     });
   });
 });

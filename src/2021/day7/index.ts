@@ -8,23 +8,22 @@ export class CrabFuelCalculator {
     fuel: Infinity,
   };
   private originalPositions: number[];
-  private sortedUniquePositions: number[];
+  // private sortedUniquePositions: number[];
+  private maxPosition: number;
+  private minPosition: number;
 
   constructor(input: string[]) {
     this.originalPositions = input[0].split(",").map(Number);
 
-    this.sortedUniquePositions = [
-      ...new Set(this.originalPositions.sort((a, b) => a - b)),
-    ];
-    // console.log(this.originalPositions);
-    // console.log(sortedPositions);
+    this.maxPosition = Math.max(...this.originalPositions);
+    this.minPosition = Math.min(...this.originalPositions);
   }
 
   public run() {
-    for (const toPos of this.sortedUniquePositions) {
+    for (let toPos = this.minPosition; toPos <= this.maxPosition; toPos++) {
       let fuel = 0;
       for (const fromPos of this.originalPositions) {
-        fuel += Math.abs(toPos - fromPos);
+        fuel += CrabFuelCalculator.stepFuelCalculator(fromPos, toPos);
       }
       if (fuel < this.leastFuel.fuel) {
         this.leastFuel = {
@@ -32,9 +31,24 @@ export class CrabFuelCalculator {
           fuel,
         };
       }
-      // console.log({ toPos, fuel }, this.leastFuel);
+      console.log({ toPos });
     }
+    console.log(this.leastFuel);
     return this.leastFuel.fuel;
+  }
+
+  public static stepFuelCalculator(from: number, to: number) {
+    if (from === to) {
+      return 0;
+    }
+    const diff = Math.abs(to - from);
+    let cost = 0;
+    let currentBurnRate = 1;
+    for (const step in Array.from({ length: diff })) {
+      cost += currentBurnRate;
+      currentBurnRate += 1;
+    }
+    return cost;
   }
 }
 
