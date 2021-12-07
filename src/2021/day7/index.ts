@@ -33,7 +33,6 @@ export class CrabFuelCalculator {
       }
       console.log({ toPos });
     }
-    console.log(this.leastFuel);
     return this.leastFuel.fuel;
   }
 
@@ -42,12 +41,8 @@ export class CrabFuelCalculator {
       return 0;
     }
     const diff = Math.abs(to - from);
-    let cost = 0;
-    let currentBurnRate = 1;
-    for (const step in Array.from({ length: diff })) {
-      cost += currentBurnRate;
-      currentBurnRate += 1;
-    }
+    const cost = (diff * (diff + 1)) / 2;
+
     return cost;
   }
 }
