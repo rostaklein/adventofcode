@@ -7,7 +7,6 @@ type Point = { num: number; x: number; y: number };
 export class LowPointCalculator {
   private rows: number[][] = [];
   private lowPoints: Point[] = [];
-  private basins: Point[][] = [];
 
   constructor(input: string[]) {
     let i = 0;
@@ -22,19 +21,50 @@ export class LowPointCalculator {
   }
 
   public getBasins() {
+    const basins: Point[][] = [];
     for (const lowPoint of this.lowPoints) {
-      const basin = [];
+      basins.push(this.checkIfAroundIsOneUp(lowPoint));
     }
+
+    return basins
+      .map((basin) => this.dedupe(basin).length)
+      .sort((a, b) => b - a)
+      .slice(0, 3)
+      .reduce((acc, curr) => acc * curr, 1);
   }
 
-  // private checkIfAroundIsOneUp(x: number, y: number) {
-  //   const pointsAround = this.lookAround(x, y);
-  //   const oneUp = lowPoint.num + 1;
-  //   for (const point of pointsAround) {
-  //     if (point === oneUp) {
-  //     }
-  //   }
-  // }
+  private checkIfAroundIsOneUp(point: Point) {
+    let basin: Point[] = [];
+
+    basin.push(point);
+    const pointsAround = this.lookAround(point.x, point.y);
+    for (const around of pointsAround) {
+      if (around.num !== 9 && around.num > point.num) {
+        const basinAround = this.checkIfAroundIsOneUp(around);
+        basin = [...basin, ...basinAround];
+      }
+    }
+
+    return basin;
+  }
+
+  private checkIfAlreadyExists(point: Point, basin: Point[]) {
+    return basin.some(
+      (basinPoint) => point.x === basinPoint.x && point.y === basinPoint.y
+    );
+  }
+
+  private dedupe(basin: Point[]) {
+    const deduped: Point[] = [];
+
+    for (const point of basin) {
+      if (!this.checkIfAlreadyExists(point, deduped)) {
+        deduped.push(point);
+      }
+    }
+
+    return deduped;
+  }
 
   private getNumberByXY(x: number, y: number): number | null {
     try {
@@ -103,7 +133,7 @@ export const main = () => {
   console.time(LowPointCalculator.name);
   const calc = new LowPointCalculator(fileLines);
   calc.getLowPoints();
-  const result = calc.getSum();
+  const result = calc.getBasins();
   console.timeEnd(LowPointCalculator.name);
   return result;
 };
