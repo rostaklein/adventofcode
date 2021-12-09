@@ -2,10 +2,12 @@ import { readLinesFromAFile } from "../utils";
 
 const fileLines = readLinesFromAFile("./day9/data.txt");
 
+type Point = { num: number; x: number; y: number };
+
 export class LowPointCalculator {
   private rows: number[][] = [];
-  private lowPoints: { num: number; x: number; y: number }[] = [];
-  private basins = new Map<number, number[]>();
+  private lowPoints: Point[] = [];
+  private basins: Point[][] = [];
 
   constructor(input: string[]) {
     let i = 0;
@@ -19,6 +21,21 @@ export class LowPointCalculator {
     return this.lowPoints.reduce((acc, curr) => (acc += curr.num + 1), 0);
   }
 
+  public getBasins() {
+    for (const lowPoint of this.lowPoints) {
+      const basin = [];
+    }
+  }
+
+  // private checkIfAroundIsOneUp(x: number, y: number) {
+  //   const pointsAround = this.lookAround(x, y);
+  //   const oneUp = lowPoint.num + 1;
+  //   for (const point of pointsAround) {
+  //     if (point === oneUp) {
+  //     }
+  //   }
+  // }
+
   private getNumberByXY(x: number, y: number): number | null {
     try {
       const num = this.rows[y][x];
@@ -29,13 +46,28 @@ export class LowPointCalculator {
     }
   }
 
-  private lookAround(x: number, y: number) {
+  private lookAround(x: number, y: number): Point[] {
     const left = this.getNumberByXY(x - 1, y);
     const right = this.getNumberByXY(x + 1, y);
     const up = this.getNumberByXY(x, y - 1);
     const down = this.getNumberByXY(x, y + 1);
 
-    return [left, right, up, down];
+    const around: Point[] = [];
+
+    if (left !== null) {
+      around.push({ num: left, x: x - 1, y });
+    }
+    if (right !== null) {
+      around.push({ num: right, x: x + 1, y });
+    }
+    if (up !== null) {
+      around.push({ num: up, x, y: y - 1 });
+    }
+    if (down !== null) {
+      around.push({ num: down, x, y: y + 1 });
+    }
+
+    return around;
   }
 
   public getLowPoints() {
@@ -43,9 +75,9 @@ export class LowPointCalculator {
     for (const row of this.rows) {
       let x = 0;
       for (const num of row) {
-        const [left, right, up, down] = this.lookAround(x, y);
+        const pointsAround = this.lookAround(x, y);
         if (
-          [left, right, up, down].every((numAround) => {
+          pointsAround.every(({ num: numAround }) => {
             if (numAround === null) {
               return true;
             }
