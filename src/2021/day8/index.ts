@@ -4,17 +4,20 @@ const fileLines = readLinesFromAFile("./day8/data.txt");
 
 export class SevenSegmentSearch {
   private stringToNumberMap = new Map<number, string>();
-  private outputValues: string[][];
-  private inputValues: string[][];
+  private inputOutputValues: {
+    input: string[];
+    output: string[];
+  }[];
 
   constructor(input: string[]) {
-    this.inputValues = [];
-    this.outputValues = [];
+    this.inputOutputValues = [];
     input.forEach((item) => {
       const [inp, output] = item.split(" | ");
 
-      this.inputValues.push(inp.split(" "));
-      this.outputValues.push(output.split(" "));
+      this.inputOutputValues.push({
+        input: inp.split(" "),
+        output: output.split(" "),
+      });
     });
   }
 
@@ -108,23 +111,45 @@ export class SevenSegmentSearch {
   }
 
   public run() {
-    let count = 0;
+    let sum = 0;
 
-    for (const row of this.inputValues) {
-      this.getEasyNumbers(row);
-      this.determineNine(row);
-      this.determineZero(row);
-      this.determineSix(row);
-      this.determineThree(row);
+    for (const row of this.inputOutputValues) {
+      this.determineNumbers(row.input);
+      sum += this.getOutput(row.output);
 
-      const topRightPart = this.determineTopRight(row);
-      this.determineTwo(row, topRightPart);
-      this.determineFive(row);
+      this.stringToNumberMap = new Map();
     }
 
-    console.log(this.stringToNumberMap);
+    return sum;
+  }
 
-    return count;
+  private determineNumbers(row: string[]) {
+    this.getEasyNumbers(row);
+    this.determineNine(row);
+    this.determineZero(row);
+    this.determineSix(row);
+    this.determineThree(row);
+
+    const topRightPart = this.determineTopRight(row);
+    this.determineTwo(row, topRightPart);
+    this.determineFive(row);
+  }
+
+  private getOutput(outputRow: string[]) {
+    let outputNum = "";
+    for (const output of outputRow) {
+      if ([...this.stringToNumberMap.values()].includes(undefined!)) {
+        console.log(this.stringToNumberMap);
+      }
+      for (const [number, string] of this.stringToNumberMap) {
+        const permutations = this.permut(string) as string[];
+        if (permutations.some((perm) => perm === output)) {
+          outputNum += number;
+        }
+      }
+    }
+
+    return Number(outputNum);
   }
 
   private filterOutRemaining(strings: string[]) {
@@ -164,6 +189,8 @@ export class SevenSegmentSearch {
 }
 
 export const main = () => {
+  console.time(SevenSegmentSearch.name);
   const result = new SevenSegmentSearch(fileLines).run();
+  console.timeEnd(SevenSegmentSearch.name);
   return result;
 };
