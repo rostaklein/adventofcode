@@ -15,7 +15,7 @@ describe("day 9", () => {
       const data = clearTestInputData(input);
       const calculator = new LowPointCalculator(data);
       expect(calculator.getLowPoints()).toEqual([1, 0, 5, 5]);
-      expect(calculator.run()).toEqual(15);
+      expect(calculator.getSum()).toEqual(15);
     });
   });
 });
