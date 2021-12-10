@@ -19,7 +19,7 @@ describe("day 10", () => {
 
       const data = clearTestInputData(input);
       const calculator = new SyntaxScoring(data);
-      expect(calculator.run()).toEqual(26397);
+      expect(calculator.run()).toEqual(288957);
     });
   });
 });

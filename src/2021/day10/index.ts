@@ -21,16 +21,14 @@ export class SyntaxScoring {
       purgedLines.push(purgedLine);
     }
 
-    // console.log({ purgedLines, l: purgedLines.length });
-    // console.log(purgedLines.map(this.getFirstClosingTag));
-    // console.log(
-    //   purgedLines.map(this.getFirstClosingTag).map(this.getScoreForClosingTag)
-    // );
-
     return purgedLines
-      .map(this.getFirstClosingTag)
-      .map(this.getScoreForClosingTag)
-      .reduce<number>((acc, curr) => (acc += curr), 0);
+      .filter((line): line is string => this.getFirstClosingTag(line) === null)
+      .map(this.getScoreForCompletion)
+      .sort((a, b) => b - a)
+      .find((_, i, arr) => {
+        const mid = Math.floor(arr.length / 2);
+        return i === mid;
+      });
   }
 
   private removeValidChunks(line: string) {
@@ -72,6 +70,32 @@ export class SyntaxScoring {
         return 0;
     }
   }
+
+  private getScoreForOpeningTag = (tag: string | null) => {
+    switch (tag) {
+      case "(":
+        return 1;
+      case "[":
+        return 2;
+      case "{":
+        return 3;
+      case "<":
+        return 4;
+      default:
+        return 0;
+    }
+  };
+
+  private getScoreForCompletion = (completion: string): number => {
+    let total = 0;
+
+    for (const string of completion.split("").reverse().join("")) {
+      total = total * 5;
+      total = total + this.getScoreForOpeningTag(string);
+    }
+
+    return total;
+  };
 }
 
 export const main = () => {
