@@ -113,5 +113,11 @@ describe("day 10", () => {
         clearTestInputData(board).join("\n")
       );
     });
+
+    it("returns correct number of flashes after 100 steps", () => {
+      const data = clearTestInputData(input);
+      const calculator = new OctopusFlasher(data);
+      expect(calculator.run(100)).toEqual(1656);
+    });
   });
 });

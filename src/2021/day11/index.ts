@@ -6,12 +6,15 @@ type Board = number[][];
 
 export class OctopusFlasher {
   private board: Board;
+  private flashedTimes = 0;
+
   constructor(private input: string[]) {
     this.board = input.map((row) => row.split("").map(Number));
   }
 
-  public run() {
-    return 0;
+  public run(steps: number) {
+    this.getBoardAfterXSteps(steps);
+    return this.flashedTimes;
   }
 
   public getBoardAfterXSteps(steps: number) {
@@ -56,6 +59,7 @@ export class OctopusFlasher {
         if (num === 10) {
           this.board[y][x] = 0;
           this.incrementAllAround(x, y);
+          this.flashedTimes++;
           debugger;
         }
         x++;
@@ -90,7 +94,7 @@ export class OctopusFlasher {
 export const main = () => {
   console.time(OctopusFlasher.name);
   const calc = new OctopusFlasher(fileLines);
-  const result = calc.run();
+  const result = calc.run(100);
   console.timeEnd(OctopusFlasher.name);
   return result;
 };
