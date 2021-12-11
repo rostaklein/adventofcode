@@ -119,5 +119,11 @@ describe("day 10", () => {
       const calculator = new OctopusFlasher(data);
       expect(calculator.run(100)).toEqual(1656);
     });
+
+    it("returns correct step when all flashed", () => {
+      const data = clearTestInputData(input);
+      const calculator = new OctopusFlasher(data);
+      expect(calculator.getStepWhenAllFlash()).toEqual(195);
+    });
   });
 });

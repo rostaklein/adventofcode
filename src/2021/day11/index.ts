@@ -7,6 +7,7 @@ type Board = number[][];
 export class OctopusFlasher {
   private board: Board;
   private flashedTimes = 0;
+  private flashedTimesThisStep = 0;
 
   constructor(private input: string[]) {
     this.board = input.map((row) => row.split("").map(Number));
@@ -15,6 +16,19 @@ export class OctopusFlasher {
   public run(steps: number) {
     this.getBoardAfterXSteps(steps);
     return this.flashedTimes;
+  }
+
+  public getStepWhenAllFlash() {
+    let step = 0;
+    do {
+      this.flashedTimesThisStep = 0;
+      this.incrementAllBoardByOne(this.board);
+      while (this.checkIfHasTens(this.board)) {
+        this.flashTens(this.board);
+      }
+      step++;
+    } while (this.flashedTimesThisStep !== 100);
+    return step;
   }
 
   public getBoardAfterXSteps(steps: number) {
@@ -59,6 +73,7 @@ export class OctopusFlasher {
         if (num === 10) {
           this.board[y][x] = 0;
           this.incrementAllAround(x, y);
+          this.flashedTimesThisStep++;
           this.flashedTimes++;
           debugger;
         }
@@ -94,7 +109,7 @@ export class OctopusFlasher {
 export const main = () => {
   console.time(OctopusFlasher.name);
   const calc = new OctopusFlasher(fileLines);
-  const result = calc.run(100);
+  const result = calc.getStepWhenAllFlash();
   console.timeEnd(OctopusFlasher.name);
   return result;
 };
