@@ -54,7 +54,6 @@ export class OctopusFlasher {
       let x = 0;
       for (const num of row) {
         if (num === 10) {
-          console.log({ num, x, y });
           this.board[y][x] = 0;
           this.incrementAllAround(x, y);
           debugger;
@@ -77,7 +76,6 @@ export class OctopusFlasher {
         } catch (err) {}
 
         if (point !== null && point <= 9 && point !== 0) {
-          console.log({ point });
           this.board[yToPop][xToPop] = point + 1;
         }
       }
