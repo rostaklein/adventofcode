@@ -19,8 +19,6 @@ export class PassagePathFinder {
 
       this.caveSystem.set(to, [...exists, from]);
     }
-
-    console.log(this.caveSystem);
   }
 
   private traverseCaveSystem(
@@ -36,7 +34,12 @@ export class PassagePathFinder {
         .filter((c) => c !== "start")
         .filter((c) => {
           const smallCaves = path.filter((c) => c.toLowerCase() === c);
-          return !smallCaves.includes(c); // Big cave, or unvisited small cave
+          const isRevisitComplete =
+            new Set(smallCaves).size !== smallCaves.length;
+          return (
+            !smallCaves.includes(c) || // Big cave, or unvisited small cave
+            (allowRevisit && !isRevisitComplete)
+          );
         })
         .forEach((c) => this.traverseCaveSystem(c, [...path, c], allowRevisit));
     }
@@ -45,7 +48,7 @@ export class PassagePathFinder {
   }
 
   public getDistinctPaths(): string[] {
-    return [...this.traverseCaveSystem("start", ["start"])].sort();
+    return [...this.traverseCaveSystem("start", ["start"], true)].sort();
   }
 }
 
