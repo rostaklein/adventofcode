@@ -8,6 +8,7 @@
 // import { main } from "./day8";
 // import { main } from "./day9";
 // import { main } from "./day10";
-import { main } from "./day11";
+// import { main } from "./day11";
+import { main } from "./day12";
 
 console.log(main());
