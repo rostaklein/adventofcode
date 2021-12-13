@@ -1,6 +1,6 @@
 import { readLinesFromAFile } from "../utils";
 
-const fileLines = readLinesFromAFile("./day12/data.txt");
+const fileLines = readLinesFromAFile("./day13/data.txt");
 
 export class TransparentOrigami {
   private gridSize: [number, number] = [0, 0];
@@ -21,6 +21,8 @@ export class TransparentOrigami {
 
     const maxX = Math.max(...dots.map(({ x }) => x));
     const maxY = Math.max(...dots.map(({ y }) => y));
+
+    console.log({ maxX, maxY });
 
     this.dots = dots;
     this.gridSize = [maxX + 1, maxY + 1];
@@ -59,6 +61,7 @@ export class TransparentOrigami {
   public foldByFirstInstruction() {
     const firstInstruction = this.foldInstructions[0];
 
+    console.log({ firstInstruction });
     if (firstInstruction.axis === "x") {
       return this.foldByX(firstInstruction.index);
     } else {
@@ -109,6 +112,8 @@ export class TransparentOrigami {
       merged.push(together);
     }
 
+    this.dotsOnPaper = merged;
+
     return merged;
   }
 
@@ -120,7 +125,9 @@ export class TransparentOrigami {
 export const main = () => {
   console.time(TransparentOrigami.name);
   const calc = new TransparentOrigami(fileLines);
-  const result = calc.getDotsOnPaper();
+  calc.getDotsOnPaper();
+  calc.foldByFirstInstruction();
+  const result = calc.getNumberOfVisibleDots();
   console.timeEnd(TransparentOrigami.name);
   return result;
 };
