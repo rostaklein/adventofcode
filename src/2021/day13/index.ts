@@ -69,6 +69,19 @@ export class TransparentOrigami {
     }
   }
 
+  public foldByAllInstructions() {
+    this.foldInstructions.forEach((instr) => {
+      if (instr.axis === "x") {
+        this.foldByX(instr.index);
+      } else {
+        this.foldByY(instr.index);
+      }
+      console.count();
+      // console.log(this.dotsOnPaper.map((i) => i.join("")).join("\n"));
+    });
+    return this.dotsOnPaper.map((i) => i.join("")).join("\n");
+  }
+
   public getNumberOfVisibleDots() {
     return this.dotsOnPaper.reduce((acc, curr) => {
       const dots = curr.filter((char) => char === "#");
@@ -81,11 +94,13 @@ export class TransparentOrigami {
     const firstHalf = [...this.dotsOnPaper].splice(0, index);
     const secondHalf = [...this.dotsOnPaper].splice(index + 1);
 
+    console.log(firstHalf.length, secondHalf.length);
+
     const merged = [];
 
     let i = 0;
     for (const firstHalfLine of [...firstHalf.reverse()]) {
-      const secondHalfLine = secondHalf[i];
+      const secondHalfLine = secondHalf[i] ?? [];
       merged.push(this.mergeLines(firstHalfLine, secondHalfLine));
       i++;
     }
@@ -126,7 +141,7 @@ export const main = () => {
   console.time(TransparentOrigami.name);
   const calc = new TransparentOrigami(fileLines);
   calc.getDotsOnPaper();
-  calc.foldByFirstInstruction();
+  console.log(calc.foldByAllInstructions());
   const result = calc.getNumberOfVisibleDots();
   console.timeEnd(TransparentOrigami.name);
   return result;
