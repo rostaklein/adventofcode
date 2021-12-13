@@ -61,6 +61,7 @@ describe("day 13", () => {
       ...........
       ...........`).join("\n")
       );
+      expect(calculator.getNumberOfVisibleDots()).toEqual(17);
     });
   });
 });

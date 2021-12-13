@@ -29,7 +29,6 @@ export class TransparentOrigami {
       .filter((line) => line.includes("="))
       .map((line) => line.split("="))
       .map(([left, right]) => {
-        console.log(left, right);
         return {
           axis: left.substring(left.length - 1) as "x" | "y",
           index: Number(right),
@@ -60,9 +59,19 @@ export class TransparentOrigami {
   public foldByFirstInstruction() {
     const firstInstruction = this.foldInstructions[0];
 
-    if (firstInstruction.axis === "y") {
+    if (firstInstruction.axis === "x") {
+      return this.foldByX(firstInstruction.index);
+    } else {
       return this.foldByY(firstInstruction.index);
     }
+  }
+
+  public getNumberOfVisibleDots() {
+    return this.dotsOnPaper.reduce((acc, curr) => {
+      const dots = curr.filter((char) => char === "#");
+
+      return (acc = acc + dots.length);
+    }, 0);
   }
 
   private foldByY(index: number) {
@@ -80,7 +89,27 @@ export class TransparentOrigami {
 
     merged.reverse();
 
+    this.dotsOnPaper = merged;
+
     return merged.map((line) => line.join("")).join("\n");
+  }
+
+  private foldByX(index: number) {
+    const merged: string[][] = [];
+    for (const line of this.dotsOnPaper) {
+      const leftSide = [...line].splice(0, index);
+      const rightSide = [...line].splice(index + 1);
+
+      leftSide.reverse();
+
+      const together = this.mergeLines(leftSide, rightSide);
+
+      together.reverse();
+
+      merged.push(together);
+    }
+
+    return merged;
   }
 
   private mergeLines(first: string[], second: string[]) {
