@@ -3,8 +3,7 @@ import { clearTestInputData } from "../utils";
 
 describe("day 13", () => {
   describe(TransparentOrigami.name, () => {
-    it("puts dots correctly on the map", () => {
-      const input = `
+    const input = `
       6,10
       0,14
       9,10
@@ -23,7 +22,11 @@ describe("day 13", () => {
       2,14
       8,10
       9,0
+
+      fold along y=7
+      fold along x=5
       `;
+    it("puts dots correctly on the map", () => {
       const data = clearTestInputData(input);
       const calculator = new TransparentOrigami(data);
       expect(calculator.getDotsOnPaper()).toEqual(
@@ -43,6 +46,20 @@ describe("day 13", () => {
         #..........
         #.#........
         `).join("\n")
+      );
+    });
+    it("should look correctly after first fold", () => {
+      const data = clearTestInputData(input);
+      const calculator = new TransparentOrigami(data);
+      calculator.getDotsOnPaper();
+      expect(calculator.foldByFirstInstruction()).toEqual(
+        clearTestInputData(`#.##..#..#.
+      #...#......
+      ......#...#
+      #...#......
+      .#.#..#.###
+      ...........
+      ...........`).join("\n")
       );
     });
   });

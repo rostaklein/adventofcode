@@ -9,6 +9,7 @@ export class TransparentOrigami {
     y: number;
   }[] = [];
   private dotsOnPaper: string[][] = [];
+  private foldInstructions: { axis: "x" | "y"; index: number }[] = [];
 
   constructor(private input: string[]) {
     const dots = input
@@ -21,10 +22,19 @@ export class TransparentOrigami {
     const maxX = Math.max(...dots.map(({ x }) => x));
     const maxY = Math.max(...dots.map(({ y }) => y));
 
-    console.log(dots, { maxX, maxY });
-
     this.dots = dots;
     this.gridSize = [maxX + 1, maxY + 1];
+
+    this.foldInstructions = input
+      .filter((line) => line.includes("="))
+      .map((line) => line.split("="))
+      .map(([left, right]) => {
+        console.log(left, right);
+        return {
+          axis: left.substring(left.length - 1) as "x" | "y",
+          index: Number(right),
+        };
+      });
   }
 
   public getDotsOnPaper() {
@@ -45,6 +55,36 @@ export class TransparentOrigami {
       }
     }
     return this.dotsOnPaper.map((row) => row.join("")).join("\n");
+  }
+
+  public foldByFirstInstruction() {
+    const firstInstruction = this.foldInstructions[0];
+
+    if (firstInstruction.axis === "y") {
+      return this.foldByY(firstInstruction.index);
+    }
+  }
+
+  private foldByY(index: number) {
+    const firstHalf = [...this.dotsOnPaper].splice(0, index);
+    const secondHalf = [...this.dotsOnPaper].splice(index + 1);
+
+    const merged = [];
+
+    let i = 0;
+    for (const firstHalfLine of [...firstHalf.reverse()]) {
+      const secondHalfLine = secondHalf[i];
+      merged.push(this.mergeLines(firstHalfLine, secondHalfLine));
+      i++;
+    }
+
+    merged.reverse();
+
+    return merged.map((line) => line.join("")).join("\n");
+  }
+
+  private mergeLines(first: string[], second: string[]) {
+    return first.map((val, i) => (second[i] === "#" ? "#" : val));
   }
 }
 
