@@ -3,21 +3,45 @@ import { readLinesFromAFile } from "../utils";
 const fileLines = readLinesFromAFile("./day15/data.txt");
 
 type Distances = Record<string, number>;
-
+type Graph = Record<string, Distances>;
 export class Chiton {
-  private graph: Record<string, Distances> = {
-    start: { A: 5, B: 2 },
-    A: { start: 1, C: 4, D: 2 },
-    B: { A: 8, D: 7 },
-    C: { D: 6, finish: 3 },
-    D: { finish: 1 },
-    finish: {},
-  };
-
-  constructor(private input: string[]) {}
+  private graph: Graph = {};
+  constructor(private input: string[]) {
+    this.makeGraph();
+  }
 
   public run() {
-    return 0;
+    return this.findShortestPath("x0y0", "x9y9").distance;
+  }
+
+  private makeGraph() {
+    let graph: Graph = {};
+    this.input.forEach((line, y) => {
+      line
+        .split("")
+        .map(Number)
+        .forEach((_, x, arr) => {
+          const currentKey = `x${x}y${y}`;
+          const onTheRight = arr[x + 1];
+          const below = Number(this.input[y + 1]?.split("")[x]);
+          graph[currentKey] = {
+            [`x${x + 1}y${y}`]: onTheRight,
+            [`x${x}y${y + 1}`]: below,
+          };
+          this.removeUndefined(graph[currentKey]);
+        });
+    });
+
+    this.graph = graph;
+    // console.log(Object.keys(this.graph).length);
+  }
+
+  private removeUndefined(obj: Record<string, unknown>) {
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] === undefined || Number.isNaN(obj[key])) {
+        delete obj[key];
+      }
+    });
   }
 
   private shortestDistanceNode(distances: Distances, visited: string[]) {
@@ -26,6 +50,7 @@ export class Chiton {
 
     // for each node in the distances object
     for (let node in distances) {
+      // console.log({node})
       // if no node has been assigned to shortest yet
       // or if the current node's distance is smaller than the current shortest
       let currentIsShortest =
@@ -63,6 +88,7 @@ export class Chiton {
       let distance = distances[node];
       let children = graph[node];
 
+      // console.log({ children });
       // for each of those child nodes:
       for (let child in children) {
         // make sure each child node is not the start node

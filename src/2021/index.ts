@@ -11,6 +11,7 @@
 // import { main } from "./day11";
 // import { main } from "./day12";
 // import { main } from "./day13";
-import { main } from "./day14";
+// import { main } from "./day14";
+import { main } from "./day15";
 
 console.log(main());
